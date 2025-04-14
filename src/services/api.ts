@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { AuthUser, Opportunity, OpportunityStatus, PaginatedResponse, Role, User } from '@/types';
 
@@ -174,11 +175,18 @@ export const createOpportunity = async (opportunityData: Partial<Opportunity>): 
   // For demo purposes, we'll mock the response
   console.log('Creating opportunity:', opportunityData);
   
+  // In a real MERN implementation, you would post to MongoDB through an Express API
+  // const response = await api.post('/api/opportunities', opportunityData);
+  // return response.data;
+  
   return {
     id: Math.floor(Math.random() * 1000).toString(),
     title: opportunityData.title || '',
     description: opportunityData.description || '',
-    organizerId: '2', // Mock organizer ID
+    location: opportunityData.location || '',
+    eventDate: opportunityData.eventDate || new Date().toISOString(),
+    capacity: opportunityData.capacity || 10,
+    organizerId: opportunityData.organizerId || '2',
     organizer: {
       id: '2',
       name: 'Organizer User',

@@ -13,11 +13,14 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Calendar, MapPin, Users } from 'lucide-react';
 
 const opportunitySchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters' }).max(100, { message: 'Title must be less than 100 characters' }),
   description: z.string().min(20, { message: 'Description must be at least 20 characters' }).max(1000, { message: 'Description must be less than 1000 characters' }),
+  eventDate: z.string().min(1, { message: 'Event date is required' }),
+  location: z.string().min(5, { message: 'Location must be at least 5 characters' }).max(100, { message: 'Location must be less than 100 characters' }),
+  capacity: z.number().min(1, { message: 'Capacity must be at least 1' }).max(1000, { message: 'Capacity must be less than 1000' }),
 });
 
 type OpportunityFormValues = z.infer<typeof opportunitySchema>;
@@ -32,6 +35,9 @@ const CreateOpportunity: React.FC = () => {
     defaultValues: {
       title: '',
       description: '',
+      eventDate: '',
+      location: '',
+      capacity: 10,
     },
   });
 
@@ -71,22 +77,100 @@ const CreateOpportunity: React.FC = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter opportunity title" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    A clear and catchy title for your opportunity
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter opportunity title" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      A clear and catchy title for your opportunity
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="eventDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Date</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          type="date" 
+                          className="pl-10" 
+                          {...field} 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      When will this opportunity/event take place
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          placeholder="Enter location (City, Venue, or Online)" 
+                          className="pl-10"
+                          {...field} 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Where will this opportunity/event be held
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="capacity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Capacity</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 h-4 w-4" />
+                        <Input 
+                          type="number" 
+                          min="1" 
+                          className="pl-10"
+                          {...field} 
+                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Maximum number of participants
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -109,20 +193,28 @@ const CreateOpportunity: React.FC = () => {
               )}
             />
 
-            <Button 
-              type="submit" 
-              className="w-full md:w-auto" 
-              disabled={createOpportunityMutation.isPending}
-            >
-              {createOpportunityMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
-                </>
-              ) : (
-                'Create Opportunity'
-              )}
-            </Button>
+            <div className="flex justify-end space-x-4">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => navigate('/organizer/opportunities')}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={createOpportunityMutation.isPending}
+              >
+                {createOpportunityMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Opportunity'
+                )}
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
