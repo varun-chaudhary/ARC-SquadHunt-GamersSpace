@@ -35,17 +35,20 @@ const CreateOpportunity: React.FC = () => {
     defaultValues: {
       title: '',
       description: '',
-      eventDate: '',
+      eventDate: new Date().toISOString().split('T')[0], // Today's date as default
       location: '',
       capacity: 10,
     },
   });
 
   const createOpportunityMutation = useMutation({
-    mutationFn: (data: OpportunityFormValues) => createOpportunity({
-      ...data,
-      organizerId: user?.id,
-    }),
+    mutationFn: (data: OpportunityFormValues) => {
+      console.log('Submitting opportunity data:', { ...data, organizerId: user?.id });
+      return createOpportunity({
+        ...data,
+        organizerId: user?.id || '',
+      });
+    },
     onSuccess: () => {
       toast({
         title: 'Success',
@@ -53,13 +56,13 @@ const CreateOpportunity: React.FC = () => {
       });
       navigate('/organizer/opportunities');
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error('Error creating opportunity:', error);
       toast({
         title: 'Error',
-        description: 'Failed to create opportunity. Please try again.',
+        description: error?.message || 'Failed to create opportunity. Please try again.',
         variant: 'destructive',
       });
-      console.error('Error creating opportunity:', error);
     },
   });
 
@@ -159,7 +162,7 @@ const CreateOpportunity: React.FC = () => {
                           min="1" 
                           className="pl-10"
                           {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 10)}
                         />
                       </div>
                     </FormControl>

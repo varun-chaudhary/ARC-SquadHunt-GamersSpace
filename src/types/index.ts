@@ -24,7 +24,7 @@ export type Opportunity = {
   eventDate?: string;
   capacity?: number;
   organizerId: string;
-  organizer: User;
+  organizer?: User;
   status: OpportunityStatus;
   createdAt: string;
   updatedAt: string;

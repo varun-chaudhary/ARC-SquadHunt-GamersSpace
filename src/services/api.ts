@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { AuthUser, Opportunity, OpportunityStatus, PaginatedResponse, Role, User } from '@/types';
 
@@ -172,34 +171,40 @@ export const updateOpportunityStatus = async (id: string, status: OpportunitySta
 
 // New APIs for organizers
 export const createOpportunity = async (opportunityData: Partial<Opportunity>): Promise<Opportunity> => {
-  // For demo purposes, we'll mock the response
-  console.log('Creating opportunity:', opportunityData);
-  
-  // In a real MERN implementation, you would post to MongoDB through an Express API
-  // const response = await api.post('/api/opportunities', opportunityData);
-  // return response.data;
-  
-  return {
-    id: Math.floor(Math.random() * 1000).toString(),
-    title: opportunityData.title || '',
-    description: opportunityData.description || '',
-    location: opportunityData.location || '',
-    eventDate: opportunityData.eventDate || new Date().toISOString(),
-    capacity: opportunityData.capacity || 10,
-    organizerId: opportunityData.organizerId || '2',
-    organizer: {
-      id: '2',
-      name: 'Organizer User',
-      email: 'organizer@arc.com',
-      role: 'organizer',
-      status: 'active',
-      isDeleted: false,
+  try {
+    // For demo purposes, we'll mock the response
+    console.log('Creating opportunity:', opportunityData);
+    
+    // In a real MERN implementation, you would post to MongoDB through an Express API
+    // const response = await api.post('/api/opportunities', opportunityData);
+    // return response.data;
+    
+    // Mock successful response
+    return {
+      id: Math.floor(Math.random() * 1000).toString(),
+      title: opportunityData.title || '',
+      description: opportunityData.description || '',
+      location: opportunityData.location || '',
+      eventDate: opportunityData.eventDate || new Date().toISOString(),
+      capacity: opportunityData.capacity || 10,
+      organizerId: opportunityData.organizerId || '2',
+      organizer: {
+        id: '2',
+        name: 'Organizer User',
+        email: 'organizer@arc.com',
+        role: 'organizer',
+        status: 'active',
+        isDeleted: false,
+        createdAt: new Date().toISOString(),
+      },
+      status: 'pending',
       createdAt: new Date().toISOString(),
-    },
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+      updatedAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error('Error in createOpportunity:', error);
+    throw error;
+  }
 };
 
 export const getOrganizerOpportunities = async (
