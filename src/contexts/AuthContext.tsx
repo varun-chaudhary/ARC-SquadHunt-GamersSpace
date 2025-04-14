@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AuthUser } from '@/types';
+import { AuthUser, Role } from '@/types';
 import { login as apiLogin, logout as apiLogout } from '@/services/api';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  hasRole: (roles: Role | Role[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,6 +67,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  // Check if user has one of the specified roles
+  const hasRole = (roles: Role | Role[]): boolean => {
+    if (!user) return false;
+    if (Array.isArray(roles)) {
+      return roles.includes(user.role);
+    }
+    return user.role === roles;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -73,7 +83,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         logout,
-        isAuthenticated: !!user && user.role === 'admin',
+        isAuthenticated: !!user,
+        hasRole,
       }}
     >
       {children}

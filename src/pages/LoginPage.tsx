@@ -28,13 +28,28 @@ const LoginPage = () => {
     }
   };
 
+  // Sample credentials for demo
+  const sampleUsers = [
+    { role: 'admin', email: 'admin@arc.com', password: 'admin123' },
+    { role: 'organizer', email: 'organizer@arc.com', password: 'organizer123' },
+    { role: 'player', email: 'player@arc.com', password: 'player123' },
+  ];
+
+  const setDemoCredentials = (role: string) => {
+    const user = sampleUsers.find(u => u.role === role);
+    if (user) {
+      setEmail(user.email);
+      setPassword(user.password);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-admin-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">ARC Admin Panel</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access the admin dashboard
+            Enter your credentials to access the dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -60,11 +75,26 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Demo credentials: admin@arc.com / admin123
-              </p>
             </div>
-            <Button type="submit" className="w-full bg-admin-primary hover:bg-admin-primary/90" disabled={isLoading}>
+            
+            <div className="pt-2">
+              <p className="text-sm text-muted-foreground mb-2">Demo accounts:</p>
+              <div className="flex flex-wrap gap-2">
+                {sampleUsers.map(user => (
+                  <Button
+                    key={user.role}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDemoCredentials(user.role)}
+                  >
+                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            
+            <Button type="submit" className="w-full bg-admin-primary hover:bg-admin-primary/90 mt-4" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -78,7 +108,7 @@ const LoginPage = () => {
         </CardContent>
         <CardFooter>
           <p className="text-xs text-center w-full text-muted-foreground">
-            This is a demo admin panel for ARC. Only administrators can access this panel.
+            This is a demo panel for ARC. Different roles have different levels of access.
           </p>
         </CardFooter>
       </Card>

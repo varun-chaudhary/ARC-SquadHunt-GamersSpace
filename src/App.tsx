@@ -28,7 +28,7 @@ const App = () => (
             <Route 
               path="/admin" 
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <DashboardPage />
                 </ProtectedRoute>
               } 
@@ -36,7 +36,7 @@ const App = () => (
             <Route 
               path="/admin/users" 
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <UsersPage />
                 </ProtectedRoute>
               } 
@@ -44,13 +44,15 @@ const App = () => (
             <Route 
               path="/admin/opportunities" 
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <OpportunitiesPage />
                 </ProtectedRoute>
               } 
             />
             
-            {/* Redirect root to admin dashboard */}
+            {/* Player/Organizer routes would go here */}
+            
+            {/* Redirect root based on user role */}
             <Route path="/" element={<Navigate to="/admin" replace />} />
             
             {/* Catch-all route */}
