@@ -11,6 +11,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   hasRole: (roles: Role | Role[]) => boolean;
+  getRoleBasedHomePath: () => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,13 +27,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (token) {
       // For demo purposes, we'll just set a mock user
       // In a real app, you would validate the token with the backend
-      setUser({
-        id: '1',
-        name: 'Admin User',
-        email: 'admin@arc.com',
-        role: 'admin',
-        token,
-      });
+      
+      // Try to get user info from localStorage if available
+      const userInfoStr = localStorage.getItem('user_info');
+      if (userInfoStr) {
+        try {
+          const userInfo = JSON.parse(userInfoStr);
+          setUser(userInfo);
+        } catch (error) {
+          console.error('Error parsing user info:', error);
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_info');
+        }
+      }
     }
     setIsLoading(false);
   }, []);
@@ -42,6 +49,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
       const user = await apiLogin(email, password);
       setUser(user);
+      
+      // Store user info in localStorage for persistence
+      localStorage.setItem('user_info', JSON.stringify(user));
+      
       toast({
         title: 'Login Successful',
         description: `Welcome back, ${user.name}!`,
@@ -61,6 +72,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     apiLogout();
     setUser(null);
+    // Clear user info from localStorage
+    localStorage.removeItem('user_info');
+    
     toast({
       title: 'Logged Out',
       description: 'You have been successfully logged out.',
@@ -76,6 +90,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return user.role === roles;
   };
 
+  // Get the home path based on user role
+  const getRoleBasedHomePath = (): string => {
+    if (!user) return '/login';
+    
+    switch (user.role) {
+      case 'admin':
+        return '/admin';
+      case 'organizer':
+        return '/organizer';
+      case 'player':
+        return '/player';
+      default:
+        return '/login';
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -85,6 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         isAuthenticated: !!user,
         hasRole,
+        getRoleBasedHomePath,
       }}
     >
       {children}

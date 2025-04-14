@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { AuthUser, Opportunity, OpportunityStatus, PaginatedResponse, Role, User } from '@/types';
 
@@ -168,6 +167,104 @@ export const getOpportunities = async (
 export const updateOpportunityStatus = async (id: string, status: OpportunityStatus): Promise<void> => {
   // In a real implementation, this would call the API
   console.log(`Updating opportunity ${id} status to ${status}`);
+};
+
+// New APIs for organizers
+export const createOpportunity = async (opportunityData: Partial<Opportunity>): Promise<Opportunity> => {
+  // For demo purposes, we'll mock the response
+  console.log('Creating opportunity:', opportunityData);
+  
+  return {
+    id: Math.floor(Math.random() * 1000).toString(),
+    title: opportunityData.title || '',
+    description: opportunityData.description || '',
+    organizerId: '2', // Mock organizer ID
+    organizer: {
+      id: '2',
+      name: 'Organizer User',
+      email: 'organizer@arc.com',
+      role: 'organizer',
+      status: 'active',
+      isDeleted: false,
+      createdAt: new Date().toISOString(),
+    },
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+};
+
+export const getOrganizerOpportunities = async (
+  organizerId: string,
+  page: number = 1, 
+  limit: number = 10
+): Promise<PaginatedResponse<Opportunity>> => {
+  // For demo purposes, we'll mock the data and filter by organizerId
+  const allOpportunities = await getOpportunities(1, 100);
+  const filteredOpportunities = allOpportunities.data.filter(opp => opp.organizerId === organizerId);
+  
+  // Calculate pagination
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  const paginatedOpportunities = filteredOpportunities.slice(start, end);
+
+  return {
+    data: paginatedOpportunities,
+    meta: {
+      total: filteredOpportunities.length,
+      page,
+      limit,
+      totalPages: Math.ceil(filteredOpportunities.length / limit),
+    },
+  };
+};
+
+// New APIs for players
+export const joinOpportunity = async (opportunityId: string, playerId: string): Promise<void> => {
+  // In a real app, this would call the API to join an opportunity
+  console.log(`Player ${playerId} joining opportunity ${opportunityId}`);
+};
+
+export const getPlayerJoinedOpportunities = async (
+  playerId: string,
+  page: number = 1, 
+  limit: number = 10
+): Promise<PaginatedResponse<Opportunity>> => {
+  // For demo purposes, we'll mock the data
+  // In a real app, this would call the API to get the opportunities that the player has joined
+  const mockJoinedOpportunities: Opportunity[] = Array.from({ length: 5 }, (_, i) => ({
+    id: `${i + 1}`,
+    title: `Joined Opportunity ${i + 1}`,
+    description: `Description for joined opportunity ${i + 1}`,
+    organizerId: '2',
+    organizer: {
+      id: '2',
+      name: 'Organizer User',
+      email: 'organizer@arc.com',
+      role: 'organizer',
+      status: 'active',
+      isDeleted: false,
+      createdAt: new Date().toISOString(),
+    },
+    status: 'approved',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }));
+  
+  // Calculate pagination
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  const paginatedOpportunities = mockJoinedOpportunities.slice(start, end);
+
+  return {
+    data: paginatedOpportunities,
+    meta: {
+      total: mockJoinedOpportunities.length,
+      page,
+      limit,
+      totalPages: Math.ceil(mockJoinedOpportunities.length / limit),
+    },
+  };
 };
 
 export default api;
