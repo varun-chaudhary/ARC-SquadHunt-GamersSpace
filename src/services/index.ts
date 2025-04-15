@@ -1,12 +1,12 @@
 
-// This file is kept for backward compatibility
-// It re-exports all services from the new modular structure
-
 import apiClient from './apiClient';
+
+// Re-export all services
 export * from './authService';
 export * from './userService';
 export * from './opportunityService';
 export * from './organizerService';
 export * from './playerService';
 
+// Export the API client as default
 export default apiClient;
