@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -106,7 +106,13 @@ const LoginPage = () => {
             </Button>
           </form>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col space-y-4">
+          <p className="text-sm text-center w-full">
+            Don't have an account yet?{" "}
+            <Link to="/register" className="text-primary font-medium hover:underline">
+              Create an account
+            </Link>
+          </p>
           <p className="text-xs text-center w-full text-muted-foreground">
             This is a demo panel for ARC. Different roles have different levels of access.
           </p>

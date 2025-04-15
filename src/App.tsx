@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 import DashboardPage from "@/pages/admin/DashboardPage";
 import UsersPage from "@/pages/admin/UsersPage";
 import OpportunitiesPage from "@/pages/admin/OpportunitiesPage";
@@ -42,6 +43,7 @@ const App = () => {
             <Routes>
               {/* Public routes */}
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               
               {/* Protected admin routes */}
               <Route 
