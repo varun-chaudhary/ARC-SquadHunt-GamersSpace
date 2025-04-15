@@ -92,3 +92,21 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.countByRole = async (req, res) => {
+    try {
+      const counts = await User.aggregate([
+        {
+          $group: {
+            _id: '$role',
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+  
+      res.json(counts);
+    } catch (err) {
+      console.error('Error fetching user counts by role:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }

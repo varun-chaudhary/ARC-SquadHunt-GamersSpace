@@ -7,6 +7,8 @@ const { authorize } = require('../middleware/auth.middleware');
 // Get all opportunities (accessible to all authenticated users)
 router.get('/', authorize(['admin', 'organizer', 'player']), opportunityController.getOpportunities);
 
+router.get('/counts', authorize(['admin']), opportunityController.getOpportunityCount);
+
 // Get opportunity by ID
 router.get('/:id', authorize(['admin', 'organizer', 'player']), opportunityController.getOpportunityById);
 

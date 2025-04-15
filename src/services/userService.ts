@@ -20,6 +20,17 @@ export const getUsers = async (
   }
 };
 
+export const getUserCountsByRole = async (): Promise<{ _id: Role; count: number }[]> => {
+  try {
+    const response = await apiClient.get('/users/count-by-role');
+    console.log('User counts by role hehe:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user counts by role:', error);
+    throw error;
+  }
+};
+
 export const deleteUser = async (id: string): Promise<void> => {
   try {
    

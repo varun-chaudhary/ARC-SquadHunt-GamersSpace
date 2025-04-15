@@ -21,6 +21,17 @@ export const getOpportunities = async (
   }
 };
 
+export const getOpportunitiesCount = async (): Promise<number> => {
+  try {
+    const response = await apiClient.get('/opportunities/counts');
+    return response.data.count;
+  }
+  catch (error) {
+    console.error('Error fetching count of opportunities:', error);
+    throw error;
+  }
+};
+
 export const updateOpportunityStatus = async (id: string, status: OpportunityStatus): Promise<void> => {
   try {
     await apiClient.patch(`/opportunities/${id}/status`, { status });

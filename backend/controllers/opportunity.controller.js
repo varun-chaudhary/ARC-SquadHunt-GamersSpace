@@ -60,6 +60,23 @@ exports.getOpportunities = async (req, res) => {
   }
 };
 
+exports.getOpportunityCount = async (req, res) => {
+  try {
+    const { status } = req.query;
+    const query = {};
+
+    if (status) {
+      query.status = status;
+    }
+
+    const count = await Opportunity.countDocuments(query);
+    res.json({ count });
+  } catch (error) {
+    console.error('Error counting opportunities:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Get opportunity by ID
 exports.getOpportunityById = async (req, res) => {
   try {
