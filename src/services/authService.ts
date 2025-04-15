@@ -1,47 +1,96 @@
 
-import { AuthUser, Role } from '@/types';
+import apiClient, { useMockData } from './apiClient';
+import { AuthUser } from '@/types';
 
-// Authentication APIs
+// Mock user data for development when MongoDB is not available
+const mockUsers = [
+  {
+    id: '1',
+    name: 'Admin User',
+    email: 'admin@arc.com',
+    role: 'admin',
+    password: 'admin123', // In a real app, passwords would be hashed
+  },
+  {
+    id: '2',
+    name: 'Organizer User',
+    email: 'organizer@arc.com',
+    role: 'organizer',
+    password: 'organizer123',
+  },
+  {
+    id: '3',
+    name: 'Player User',
+    email: 'player@arc.com',
+    role: 'player',
+    password: 'player123',
+  },
+];
+
 export const login = async (email: string, password: string): Promise<AuthUser> => {
-  // For demo purposes, we'll mock the login API with different user types
-  const mockUsers = {
-    'admin@arc.com': {
-      id: '1',
-      name: 'Admin User',
-      email: 'admin@arc.com',
-      role: 'admin' as Role,
-      password: 'admin123',
-      token: 'mock_jwt_token_for_admin_user',
-    },
-    'organizer@arc.com': {
-      id: '2',
-      name: 'Organizer User',
-      email: 'organizer@arc.com',
-      role: 'organizer' as Role,
-      password: 'organizer123',
-      token: 'mock_jwt_token_for_organizer_user',
-    },
-    'player@arc.com': {
-      id: '3',
-      name: 'Player User',
-      email: 'player@arc.com',
-      role: 'player' as Role,
-      password: 'player123',
-      token: 'mock_jwt_token_for_player_user',
-    },
-  };
-  
-  const user = mockUsers[email as keyof typeof mockUsers];
-  
-  if (user && user.password === password) {
-    const { password: _, ...authUser } = user;
-    localStorage.setItem('auth_token', authUser.token);
-    return authUser;
+  try {
+    if (useMockData) {
+      // Mock login for development
+      console.log('Using mock login (MongoDB not connected)');
+      const user = mockUsers.find(
+        (u) => u.email === email && u.password === password
+      );
+      
+      if (!user) {
+        throw new Error('Invalid credentials');
+      }
+      
+      // Generate a mock token
+      const token = `mock_token_${user.id}_${Date.now()}`;
+      localStorage.setItem('auth_token', token);
+      
+      // Return user without the password
+      const { password: _, ...userWithoutPassword } = user;
+      return {
+        ...userWithoutPassword,
+        token,
+      } as AuthUser;
+    }
+
+    // MongoDB-connected login for production
+    const response = await apiClient.post('/auth/login', { email, password });
+    const { token, user } = response.data;
+    
+    // Store the token
+    localStorage.setItem('auth_token', token);
+    
+    return {
+      ...user,
+      token,
+    };
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
   }
-  
-  throw new Error('Invalid credentials');
 };
 
 export const logout = (): void => {
+  // Remove the token from storage
   localStorage.removeItem('auth_token');
+};
+
+export const register = async (userData: {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}): Promise<void> => {
+  try {
+    if (useMockData) {
+      // Mock registration (would be implemented with MongoDB in production)
+      console.log('Mock registration (MongoDB not connected):', userData);
+      return;
+    }
+    
+    // MongoDB-connected registration
+    await apiClient.post('/auth/register', userData);
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  }
 };
