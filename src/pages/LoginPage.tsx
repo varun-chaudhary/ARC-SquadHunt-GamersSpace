@@ -9,8 +9,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Loader2 } from 'lucide-react';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('admin@arc.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { login, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,7 +47,7 @@ const LoginPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-admin-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">ARC Admin Panel</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">ARC SquadHunt</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access the dashboard
           </CardDescription>
@@ -59,7 +59,7 @@ const LoginPage = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@arc.com"
+                placeholder="Enter Your Email here"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -70,29 +70,14 @@ const LoginPage = () => {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="Enter Your Password here"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             
-            <div className="pt-2">
-              <p className="text-sm text-muted-foreground mb-2">Demo accounts:</p>
-              <div className="flex flex-wrap gap-2">
-                {sampleUsers.map(user => (
-                  <Button
-                    key={user.role}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDemoCredentials(user.role)}
-                  >
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            
             
             <Button type="submit" className="w-full bg-admin-primary hover:bg-admin-primary/90 mt-4" disabled={isLoading}>
               {isLoading ? (

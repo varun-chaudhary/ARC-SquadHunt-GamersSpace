@@ -64,6 +64,30 @@ const OpportunitiesPage = () => {
     fetchOpportunities();
   }, [page, limit, status, toast]);
 
+  const exportOpportunitiesToCSV = (data: Opportunity[]) => {
+    const headers = ['ID', 'Title', 'Organizer', 'Status', 'Created At'];
+    const rows = data.map((opportunity) => [
+      opportunity.id,
+      opportunity.title,
+      opportunity.organizer.name,
+      opportunity.status,
+      new Date(opportunity.createdAt).toLocaleString(),
+    ]);
+  
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers, ...rows].map((row) => row.join(',')).join('\n');
+  
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'opportunities.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+
   const handleStatusChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (value === 'all') {
@@ -152,6 +176,10 @@ const OpportunitiesPage = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <Button variant="outline" size="sm" onClick={() => exportOpportunitiesToCSV(opportunities)}>
+              Export as CSV
+            </Button>
           </div>
         </div>
 

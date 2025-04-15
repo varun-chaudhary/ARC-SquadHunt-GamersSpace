@@ -70,6 +70,32 @@ const UsersPage = () => {
     fetchUsers();
   }, [page, limit, role, toast]);
 
+  const exportToCSV = (data: User[]) => {
+    const csvRows = [
+      ['ID', 'Name', 'Email', 'Role', 'Status', 'Deleted At'], // headers
+      ...data.map(user => [
+        user.id,
+        user.name,
+        user.email,
+        user.role,
+        user.isDeleted ? 'Deleted' : 'Active',
+        user.deletedAt || ''
+      ])
+    ];
+  
+    const csvContent = csvRows.map(e => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'users.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+
 
 
   const handleRoleChange = (value: string) => {
@@ -162,6 +188,10 @@ const UsersPage = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <Button variant="outline" onClick={() => exportToCSV(users)}>
+              Export CSV
+            </Button>
           </div>
         </div>
 

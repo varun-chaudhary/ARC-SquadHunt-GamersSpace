@@ -65,12 +65,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ open, toggleSidebar }) => {
         ))}
       </nav>
       
-      <div className="absolute bottom-4 left-0 right-0 px-6">
-        <div className="py-3 px-4 bg-admin-secondary/10 rounded-lg">
-          <p className="text-sm text-white/80">Logged in as:</p>
-          <p className="font-medium">Admin User</p>
-        </div>
-      </div>
+     
     </aside>
   );
 };
