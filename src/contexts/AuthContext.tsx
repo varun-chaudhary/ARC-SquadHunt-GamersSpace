@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Get the home path based on user role
   const getRoleBasedHomePath = (): string => {
     if (!user) return '/login';
-    
+    console.log('User role:', user.role); // Debugging line
     switch (user.role) {
       case 'admin':
         return '/admin';
