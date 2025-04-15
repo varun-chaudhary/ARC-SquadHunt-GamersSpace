@@ -46,6 +46,66 @@ export const getPlayerOpportunities = async (
   }
 };
 
+// Add the missing function that was causing the errors
+export const getPlayerJoinedOpportunities = async (
+  playerId: string,
+  page: number = 1, 
+  limit: number = 10
+): Promise<PaginatedResponse<Opportunity>> => {
+  try {
+    if (useMockData) {
+      // Mock data for joined opportunities
+      console.log(`Getting joined opportunities for player ${playerId} (MongoDB not connected)`);
+      
+      // For mock data, randomly select some from all opportunities to simulate joined ones
+      const allOpportunities = await getOpportunities(1, 100);
+      const joinedOpportunities = allOpportunities.data
+        .filter(opp => opp.status === 'approved')
+        .filter((_, i) => i % 4 === 0); // Just take every fourth one as "joined"
+      
+      // Calculate pagination
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      const paginatedOpportunities = joinedOpportunities.slice(start, end);
+
+      return {
+        data: paginatedOpportunities,
+        meta: {
+          total: joinedOpportunities.length,
+          page,
+          limit,
+          totalPages: Math.ceil(joinedOpportunities.length / limit),
+        },
+      };
+    }
+
+    // MongoDB-connected query for joined opportunities
+    const response = await apiClient.get(`/players/${playerId}/joined-opportunities`, {
+      params: { page, limit },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching player joined opportunities:', error);
+    throw error;
+  }
+};
+
+export const joinOpportunity = async (opportunityId: string, playerId: string): Promise<void> => {
+  try {
+    if (useMockData) {
+      // Mock joining an opportunity
+      console.log(`Player ${playerId} joining opportunity ${opportunityId} (MongoDB not connected)`);
+      return;
+    }
+
+    // MongoDB-connected operation
+    await apiClient.post(`/players/${playerId}/opportunities/${opportunityId}/join`);
+  } catch (error) {
+    console.error('Error joining opportunity:', error);
+    throw error;
+  }
+};
+
 export const registerForOpportunity = async (playerId: string, opportunityId: string): Promise<void> => {
   try {
     if (useMockData) {
