@@ -5,7 +5,7 @@ import axios from 'axios';
 // This should be replaced with your actual MongoDB API endpoint in production
 export const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://api.arc-admin.demo'  // Replace with your production MongoDB API
-  : 'http://localhost:5000/api';  // Assuming local MongoDB server runs on port 5000
+  : 'http://localhost:5000/api';  // Local MongoDB server runs on port 5000
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -24,6 +24,7 @@ apiClient.interceptors.request.use(
 );
 
 // For development fallback when MongoDB is not available
-export const useMockData = process.env.NODE_ENV !== 'production';
+// Set this to false once you have your MongoDB server running
+export const useMockData = false;
 
 export default apiClient;
